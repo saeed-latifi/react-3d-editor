@@ -33,7 +33,7 @@ const useStore = create<State & Actions>((set) => ({
                 ["tall"]: new Vector3(1, 3, 1),
                 ["top"]: new Vector3(1, 0.5, 1),
                 ["bottom"]: new Vector3(1, 0.5, 1),
-                ["tallSpacer"]: new Vector3(1, 1, 1),
+                ["tallSpacer"]: new Vector3(1, 3, 1), // same as tall
                 ["bottomSpacer"]: new Vector3(1, 0.5, 1),
                 ["topSpacer"]: new Vector3(1, 0.5, 1),
             };
@@ -46,7 +46,7 @@ const useStore = create<State & Actions>((set) => ({
                     case "bottom":
                     case "bottomSpacer":
                         return 0.5;
-                    default:
+                    default: // includes 'tall' and 'tallSpacer'
                         return 1.5;
                 }
             };
@@ -162,10 +162,54 @@ const useStore = create<State & Actions>((set) => ({
         set({ selectedId: id });
     },
 
+    // deleteMesh: function (id) {
+    //     set(function (state) {
+    //         return {
+    //             meshes: state.meshes.filter((mesh) => mesh.id !== id),
+    //             selectedId: state.selectedId === id ? null : state.selectedId,
+    //         };
+    //     });
+    // },
+
     deleteMesh: function (id) {
         set(function (state) {
+            const meshToDelete = state.meshes.find((m) => m.id === id);
+
+            if (!meshToDelete) return { selectedId: null };
+
+            const updatedMeshes = state.meshes.filter((mesh) => mesh.id !== id);
+
+            // Sort all remaining meshes by original x position
+            const sortedMeshes = [...updatedMeshes].sort((a, b) => a.position.x - b.position.x);
+
+            let lastTopX = -1;
+            let lastBottomX = -1;
+            let lastTallX = -1;
+
+            const recalculatedMeshes = [];
+
+            for (const mesh of sortedMeshes) {
+                let newX = 0;
+
+                if (mesh.type === "top" || mesh.type === "topSpacer") {
+                    newX = Math.max(lastTopX + 1, lastTallX + 1);
+                    lastTopX = newX;
+                } else if (mesh.type === "bottom" || mesh.type === "bottomSpacer") {
+                    newX = Math.max(lastBottomX + 1, lastTallX + 1);
+                    lastBottomX = newX;
+                } else if (mesh.type === "tall" || mesh.type === "tallSpacer") {
+                    newX = Math.max(lastTallX + 1, lastTopX + 1, lastBottomX + 1);
+                    lastTallX = newX;
+                }
+
+                recalculatedMeshes.push({
+                    ...mesh,
+                    position: new Vector3(newX, mesh.position.y, mesh.position.z),
+                });
+            }
+
             return {
-                meshes: state.meshes.filter((mesh) => mesh.id !== id),
+                meshes: recalculatedMeshes,
                 selectedId: state.selectedId === id ? null : state.selectedId,
             };
         });

@@ -43,8 +43,108 @@ const getFullHeightFromParts = (upperHeight: number, lowerHeight: number, offset
     return upperHeight + lowerHeight + offset;
 };
 
+const meshesInit = [
+    {
+        id: 1,
+        type: "Full",
+        position: {
+            x: 0,
+            y: 0,
+            z: 0,
+        },
+        dimensions: {
+            x: 1,
+            y: 3,
+            z: 1,
+        },
+    },
+    {
+        id: 2,
+        type: "Upper",
+        position: {
+            x: 1,
+            y: 1.25,
+            z: 0,
+        },
+        dimensions: {
+            x: 1,
+            y: 0.5,
+            z: 1,
+        },
+    },
+    {
+        id: 3,
+        type: "Lower",
+        position: {
+            x: 1,
+            y: -1.25,
+            z: 0,
+        },
+        dimensions: {
+            x: 1,
+            y: 0.5,
+            z: 1,
+        },
+    },
+    {
+        id: 4,
+        type: "FullSpacer",
+        position: {
+            x: 2,
+            y: 0,
+            z: 0,
+        },
+        dimensions: {
+            x: 1,
+            y: 3,
+            z: 1,
+        },
+    },
+    {
+        id: 5,
+        type: "Lower",
+        position: {
+            x: 3,
+            y: -1.25,
+            z: 0,
+        },
+        dimensions: {
+            x: 1,
+            y: 0.5,
+            z: 1,
+        },
+    },
+    {
+        id: 6,
+        type: "Upper",
+        position: {
+            x: 3,
+            y: 1.25,
+            z: 0,
+        },
+        dimensions: {
+            x: 1,
+            y: 0.5,
+            z: 1,
+        },
+    },
+    {
+        id: 7,
+        type: "Full",
+        position: {
+            x: 4,
+            y: 0,
+            z: 0,
+        },
+        dimensions: {
+            x: 1,
+            y: 3,
+            z: 1,
+        },
+    },
+];
 const useStore = create<State & Actions>((set, _get) => ({
-    meshes: [],
+    meshes: meshesInit as Mesh[],
     selectedId: null,
     nextId: 1,
     offset: 0.5,

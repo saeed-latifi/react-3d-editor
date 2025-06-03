@@ -143,10 +143,11 @@ const meshesInit = [
         },
     },
 ];
+
 const useStore = create<State & Actions>((set, _get) => ({
     meshes: meshesInit as Mesh[],
     selectedId: null,
-    nextId: 1,
+    nextId: meshesInit.length + 1,
     offset: 0.5,
 
     addMesh: function (type) {
